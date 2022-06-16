@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include scs_sales_purchase *.css
+recursive-include scs_sales_purchase *.csv
+recursive-include scs_sales_purchase *.html
+recursive-include scs_sales_purchase *.ico
+recursive-include scs_sales_purchase *.js
+recursive-include scs_sales_purchase *.json
+recursive-include scs_sales_purchase *.md
+recursive-include scs_sales_purchase *.png
+recursive-include scs_sales_purchase *.py
+recursive-include scs_sales_purchase *.svg
+recursive-include scs_sales_purchase *.txt
+recursive-exclude scs_sales_purchase *.pyc
