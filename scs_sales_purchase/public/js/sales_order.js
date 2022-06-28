@@ -4,7 +4,7 @@ frappe.ui.form.on("Sales Order", {
 
 			if (frm.doc.docstatus == 1){
 
-			frm.add_custom_button(__('PO'), () => {
+			frm.add_custom_button(__('Purchase Order'), () => {
 
 				let pending_items = frm.doc.items.some((item) =>{
 					let pending_qty = flt(item.stock_qty) - flt(item.ordered_qty);
@@ -23,7 +23,8 @@ frappe.ui.form.on("Sales Order", {
 							"fieldtype": "Check",
 							"label": __("Against Default Supplier"),
 							"fieldname": "against_default_supplier",
-							"default": 0
+							"default": 0,
+							"description": "If not use Against Default Supplier and if you use a <b>Custom Supplier</b>, you must click the <b>Update Custom Supplier</b>."
 						},
 						{
 							fieldname: 'items_for_po', fieldtype: 'Table', label: 'Select Items',
@@ -39,7 +40,7 @@ frappe.ui.form.on("Sales Order", {
 									fieldtype:'Data',
 									fieldname:'item_name',
 									label: __('Item name'),
-									in_list_view:1
+									in_list_view:0
 								},
 								{
 									fieldtype:'Float',
@@ -58,21 +59,28 @@ frappe.ui.form.on("Sales Order", {
 									fieldtype:'Link',
 									options:'Supplier',
 									fieldname:'supplier',
-									label: __('Supplier'),
+									label: __('Default Supplier'),
 									in_list_view:1
 								},
+								{
+									fieldtype:'Link',
+									options:'Supplier',
+									fieldname:'po_supplier',
+									label: __('Custom Supplier'),
+									in_list_view:1,
+								},
+							
 							]
 						}
 					],
 					primary_action_label: 'Create Purchase Order',
 					primary_action (args) {
 						if (!args) return;
-
 						let selected_items = dialog.fields_dict.items_for_po.grid.get_selected_children();
 						if(selected_items.length == 0) {
 							frappe.throw({message: 'Please select Items from the Table', title: __('Items Required'), indicator:'blue'})
 						}
-						dialog.hide();
+						// dialog.hide();
 
 						var method = args.against_default_supplier ? "make_purchase_order_for_default_supplier" : "make_purchase_order"
 						return frappe.call({
@@ -82,17 +90,20 @@ frappe.ui.form.on("Sales Order", {
 							args: {
 								"source_name": frm.doc.name,
 								"selected_items": selected_items,
-								"po_supplier": selected_items[0].supplier
+								"po_supplier": selected_items[0].po_supplier
 							},
 							freeze: true,
 							callback: function(r) {
 								if(!r.exc) {
 									if (!args.against_default_supplier) {
-										frappe.msgprint({
-											title: __('Purchase Order'),
-								            indicator: 'blue',
-								            message: __('<a onclick="window.open(this.href);return false;" href="/app/purchase-order/' + r.message[0].name +'">' + r.message[0].name + '</a>')
-								        });
+										for (var i =0; i < r.message.length; i++)
+										{		
+											frappe.msgprint({
+												title: __('Purchase Order'),
+									            indicator: 'blue',
+									            message: __('<a onclick="window.open(this.href);return false;" href="/app/purchase-order/' + r.message[i].name +'">' + r.message[i].name + '</a>')
+									        });
+										}
 									}
 									else {
 										frappe.route_options = {
@@ -111,7 +122,26 @@ frappe.ui.form.on("Sales Order", {
 								}
 							}
 						})
+					},
+					secondary_action_label: 'Update Custom Supplier',
+		            secondary_action(args) {
+		            	let selected_items = dialog.fields_dict.items_for_po.grid.get_selected_children();
+
+					    $.each(frm.doc.items, function(i, v) {
+						for (var j =0; j < selected_items.length; j++)
+						{
+							if (v.item_code == selected_items[j].item_code){
+								frappe.model.set_value(v.doctype, v.name, 'po_supplier', selected_items[j].po_supplier)
+							}
+						}
+						frm.refresh_field('items');
+						setTimeout(() => {
+							frm.save("Update");
+						}, 10);
+					})
+
 					}
+
 				});
 
 				dialog.fields_dict["against_default_supplier"].df.onchange = () => set_po_items_data(dialog);
@@ -141,7 +171,7 @@ frappe.ui.form.on("Sales Order", {
 							}
 						});
 						dialog.fields_dict["items_for_po"].df.data = po_items;
-						// dialog.get_field("items_for_po").grid.only_sortable();
+						dialog.get_field("items_for_po").grid.only_sortable();
 					} 
 					else {
 							let po_items = [];
@@ -155,7 +185,7 @@ frappe.ui.form.on("Sales Order", {
 									"item_code": d.item_code,
 									"pending_qty": pending_qty,
 									"uom": d.uom,
-									"supplier": d.supplier
+									"po_supplier": d.po_supplier
 								});
 							}
 						});
@@ -163,16 +193,17 @@ frappe.ui.form.on("Sales Order", {
 						$("div[data-fieldname = item_name]").css({'pointer-events':'none'});
 						$("div[data-fieldname = uom]").css({'pointer-events':'none'});
 						$("div[data-fieldname = pending_qty]").css({'pointer-events':'none'});
+						$("div[data-fieldname = supplier]").css({'pointer-events':'none'});
 						dialog.fields_dict["items_for_po"].df.data = po_items;
 						dialog.get_field("items_for_po").refresh();
 					}
 				}
 				set_po_items_data(dialog);
 				dialog.get_field("items_for_po").refresh();
-				dialog.wrapper.find('.grid-heading-row .grid-row-check').click();
+				// dialog.wrapper.find('.grid-heading-row .grid-row-check').click();
 				dialog.show();
 
-			});
+			}, __("Create"));
 		
 			}
 		}

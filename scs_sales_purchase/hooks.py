@@ -11,7 +11,13 @@ app_license = "MIT"
 
 # Includes in <head>
 # ------------------
-
+fixtures = [{
+	"doctype": "Custom Field",
+		"filters": {
+			"module": ["=", "SCS Sales-Purchase"]
+			}
+		},
+	]
 # include js, css files in header of desk.html
 # app_include_css = "/assets/scs_sales_purchase/css/scs_sales_purchase.css"
 # app_include_js = "/assets/scs_sales_purchase/js/scs_sales_purchase.js"
