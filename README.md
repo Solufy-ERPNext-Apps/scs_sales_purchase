@@ -1,4 +1,4 @@
-## SCS Sales-Purchase
+## Sales-Purchase
 
 #### Required Modules:
 1. Selling
@@ -15,7 +15,7 @@ ___
 4. `bench clear-cache`
 ___
 
-#### Key Features of SCS Sales-Purchase
+#### Key Features of Sales-Purchase
 1. Default Supplier to create Purchase Order
 2. Item-wise custom Supplier with create Purchase Order
 ___
