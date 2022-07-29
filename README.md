@@ -20,6 +20,8 @@ ___
 2. Item-wise custom Supplier with create Purchase Order
 ___
 
+### Documentation: https://github.com/Solufy-ERPNext-Apps/scs_sales_purchase/wiki
+___
 #### License
 
 MIT
