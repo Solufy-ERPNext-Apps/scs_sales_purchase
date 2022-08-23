@@ -6,7 +6,7 @@ app_publisher = "Nihantra Patel"
 app_description = "Sales-Purchase"
 app_icon = "octicon octicon-file-directory"
 app_color = "grey"
-app_email = "n.patel.serpentcs@gmail.com"
+app_email = "contact@solufy.in"
 app_license = "MIT"
 
 # Includes in <head>
