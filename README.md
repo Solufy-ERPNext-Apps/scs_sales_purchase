@@ -7,9 +7,11 @@
 ___
 #### Available in version
 - Version 13
+- Version 14
 ___
 #### How to Install App in ERPNext
-1. `bench get-app https://github.com/Solufy-ERPNext-Apps/scs_sales_purchase.git`
+1. Version 13: `bench get-app scs_sales_purchase https://github.com/Solufy-ERPNext-Apps/scs_sales_purchase.git`
+* Version 14: `bench get-app scs_sales_purchase https://github.com/Solufy-ERPNext-Apps/scs_sales_purchase.git --branch 14.0`
 2. `bench --site [your.site.name] install-app scs_sales_purchase`
 3. `bench migrate`
 4. `bench clear-cache`
